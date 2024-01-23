@@ -25,6 +25,6 @@ const removeCard = function (targetElement) {
 };
 
 // @todo: Вывести карточки на страницу
-for (let i = 0; i <= initialCards.length; i++) {
-    placesList.append(creatCard(initialCards[i], removeCard));
+for (let card of initialCards) {
+    placesList.append(creatCard(card, removeCard));
 }
