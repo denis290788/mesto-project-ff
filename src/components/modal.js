@@ -1,4 +1,4 @@
-// @todo: Функция открытия модального окна openModal
+// Функция открытия модального окна openModal
 const openModal = (modalElement) => {
     modalElement.classList.add("popup_is-opened");
 
@@ -17,7 +17,9 @@ const openModal = (modalElement) => {
     });
 };
 
-// @todo: Функция закрытия модального окна closeModal
-const closeModal = (modalElement) => modalElement.classList.remove("popup_is-opened");
+// Функция закрытия модального окна closeModal
+const closeModal = (modalElement) => {
+    modalElement.classList.remove("popup_is-opened");
+};
 
 export { openModal, closeModal };
