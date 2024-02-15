@@ -1,24 +1,32 @@
-import "../pages/index.css"; // добавьте импорт главного файла стилей
-import { initialCards } from "./components/cards.js";
-import { createCard, removeCard, likeCard, showCardImage } from "./components/card.js";
-import { openModal, closeModal } from "./components/modal.js";
+import '../pages/index.css'; // добавьте импорт главного файла стилей
+import { initialCards } from './components/cards.js';
+import { createCard, removeCard, likeCard } from './components/card.js';
+import { openModal, closeModal } from './components/modal.js';
 
 // Темплейт карточки
-const cardTemplate = document.querySelector("#card-template").content;
+const cardTemplate = document.querySelector('#card-template').content;
 
-const popupEdit = document.querySelector(".popup_type_edit");
-const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupEdit = document.querySelector('.popup_type_edit');
+const popupNewCard = document.querySelector('.popup_type_new-card');
+const popupImage = document.querySelector('.popup_type_image');
 
-const profileForm = document.forms[0];
-const nameInput = document.querySelector(".popup__input_type_name");
-const jobInput = document.querySelector(".popup__input_type_description");
+const profileForm = document.forms['edit-profile'];
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
 
-const newCardForm = document.forms[1];
-const cardNameInput = document.querySelector(".popup__input_type_card-name");
-const cardLinkInput = document.querySelector(".popup__input_type_url");
+const newCardForm = document.forms['new-place'];
+const cardNameInput = document.querySelector('.popup__input_type_card-name');
+const cardLinkInput = document.querySelector('.popup__input_type_url');
 
-// DOM узлы
-const placesList = document.querySelector(".places__list");
+const placesList = document.querySelector('.places__list');
+
+// Функция открытия popup с картинкой карточки
+const showCardImage = (targetElement) => {
+    popupImage.querySelector('.popup__image').src = targetElement.src;
+    popupImage.querySelector('.popup__image').alt = targetElement.alt;
+    popupImage.querySelector('.popup__caption').textContent = targetElement.alt;
+    openModal(popupImage);
+};
 
 // Вывести карточки на страницу
 for (let card of initialCards) {
@@ -26,37 +34,37 @@ for (let card of initialCards) {
 }
 
 // обработчики событий для открытия модальных окон
-document.querySelector(".profile__edit-button").addEventListener("click", () => {
-    nameInput.value = document.querySelector(".profile__title").textContent;
-    jobInput.value = document.querySelector(".profile__description").textContent;
+document.querySelector('.profile__edit-button').addEventListener('click', () => {
+    profileForm.reset();
+    nameInput.value = document.querySelector('.profile__title').textContent;
+    jobInput.value = document.querySelector('.profile__description').textContent;
     openModal(popupEdit);
 });
-document.querySelector(".profile__add-button").addEventListener("click", () => {
+document.querySelector('.profile__add-button').addEventListener('click', () => {
+    newCardForm.reset();
     openModal(popupNewCard);
 });
 
 // обработчики событий для закрытия модальных окон по клику на Х
-popupEdit.querySelector(".popup__close").addEventListener("click", () => {
+popupEdit.querySelector('.popup__close').addEventListener('click', () => {
     closeModal(popupEdit);
-    profileForm.reset();
 });
-popupNewCard.querySelector(".popup__close").addEventListener("click", () => {
+popupNewCard.querySelector('.popup__close').addEventListener('click', () => {
     closeModal(popupNewCard);
-    newCardForm.reset();
 });
-popupImage.querySelector(".popup__close").addEventListener("click", () => {
+popupImage.querySelector('.popup__close').addEventListener('click', () => {
     closeModal(popupImage);
 });
 
-// функции отправки форм для редактирования профиля и добавления карточек
-function handleFormSubmit(evt) {
+// функция отправки формы для редактирования профиля и добавления карточек
+function handleProfileSubmit(evt) {
     evt.preventDefault();
-    document.querySelector(".profile__title").textContent = nameInput.value;
-    document.querySelector(".profile__description").textContent = jobInput.value;
-    profileForm.reset();
-    closeModal(evt.target.closest(".popup"));
+    document.querySelector('.profile__title').textContent = nameInput.value;
+    document.querySelector('.profile__description').textContent = jobInput.value;
+    closeModal(popupEdit);
 }
 
+// функция отправки формы для добавления карточки
 function handleCardSubmit(evt) {
     evt.preventDefault();
     const newCard = {
@@ -64,12 +72,11 @@ function handleCardSubmit(evt) {
         link: cardLinkInput.value,
     };
     placesList.prepend(createCard(newCard, removeCard, likeCard, showCardImage));
-    newCardForm.reset();
-    closeModal(evt.target.closest(".popup"));
+    closeModal(popupNewCard);
 }
 
 // обработчики отправки форм для редактирования профиля и добавления карточек
-profileForm.addEventListener("submit", handleFormSubmit);
-newCardForm.addEventListener("submit", handleCardSubmit);
+profileForm.addEventListener('submit', handleProfileSubmit);
+newCardForm.addEventListener('submit', handleCardSubmit);
 
-export { cardTemplate };
+export { cardTemplate, showCardImage };
