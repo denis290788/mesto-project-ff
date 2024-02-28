@@ -2,6 +2,7 @@ import '../pages/index.css'; // добавьте импорт главного �
 import { initialCards } from './components/cards.js';
 import { createCard, removeCard, likeCard } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
+import { validationConfig, enableValidation, clearValidation } from './validation.js';
 
 // Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -35,12 +36,14 @@ for (let card of initialCards) {
 
 // обработчики событий для открытия модальных окон
 document.querySelector('.profile__edit-button').addEventListener('click', () => {
+    clearValidation(profileForm, validationConfig);
     profileForm.reset();
     nameInput.value = document.querySelector('.profile__title').textContent;
     jobInput.value = document.querySelector('.profile__description').textContent;
     openModal(popupEdit);
 });
 document.querySelector('.profile__add-button').addEventListener('click', () => {
+    clearValidation(newCardForm, validationConfig);
     newCardForm.reset();
     openModal(popupNewCard);
 });
@@ -78,5 +81,7 @@ function handleCardSubmit(evt) {
 // обработчики отправки форм для редактирования профиля и добавления карточек
 profileForm.addEventListener('submit', handleProfileSubmit);
 newCardForm.addEventListener('submit', handleCardSubmit);
+
+enableValidation(validationConfig);
 
 export { cardTemplate, showCardImage };
