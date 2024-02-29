@@ -1,8 +1,8 @@
-import '../pages/index.css'; // добавьте импорт главного файла стилей
-import { initialCards } from './components/cards.js';
+import '../pages/index.css';
 import { createCard, removeCard, likeCard } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import { validationConfig, enableValidation, clearValidation } from './validation.js';
+import { getUserInfo, getInitialCards } from './api.js';
 
 // Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -28,11 +28,6 @@ const showCardImage = (targetElement) => {
     popupImage.querySelector('.popup__caption').textContent = targetElement.alt;
     openModal(popupImage);
 };
-
-// Вывести карточки на страницу
-for (let card of initialCards) {
-    placesList.append(createCard(card, removeCard, likeCard, showCardImage));
-}
 
 // обработчики событий для открытия модальных окон
 document.querySelector('.profile__edit-button').addEventListener('click', () => {
@@ -82,6 +77,29 @@ function handleCardSubmit(evt) {
 profileForm.addEventListener('submit', handleProfileSubmit);
 newCardForm.addEventListener('submit', handleCardSubmit);
 
+// включаем валидацию
 enableValidation(validationConfig);
+
+// загружаем на страницу информацию о пользователе
+getUserInfo()
+    .then((result) => {
+        document.querySelector('.profile__title').textContent = result.name;
+        document.querySelector('.profile__description').textContent = result.about;
+        document.querySelector('.profile__image').style.backgroundImage = `url('${result.avatar}')`;
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+// загружаем на страницу карточки пользователя
+getInitialCards()
+    .then((cards) => {
+        cards.forEach((card) => {
+            placesList.append(createCard(card, removeCard, likeCard, showCardImage));
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 
 export { cardTemplate, showCardImage };
