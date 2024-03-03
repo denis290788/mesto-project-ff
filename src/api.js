@@ -84,3 +84,35 @@ export const deleteCard = (id) => {
         }
     });
 };
+
+export const addLike = (id) => {
+    return fetch(`${config.baseUrl}/cards/likes/` + id, {
+        method: 'PUT',
+        headers: {
+            authorization: '68087d11-b985-4432-95b1-f7afb2d9c956',
+            'Content-Type': 'application/json',
+        },
+    }).then((res) => {
+        if (res.ok) {
+            return res.json();
+        } else {
+            return Promise.reject(`Ошибка: ${res.status}`);
+        }
+    });
+};
+
+export const deleteLike = (id) => {
+    return fetch(`${config.baseUrl}/cards/likes/` + id, {
+        method: 'DELETE',
+        headers: {
+            authorization: '68087d11-b985-4432-95b1-f7afb2d9c956',
+            'Content-Type': 'application/json',
+        },
+    }).then((res) => {
+        if (res.ok) {
+            return res.json();
+        } else {
+            return Promise.reject(`Ошибка: ${res.status}`);
+        }
+    });
+};

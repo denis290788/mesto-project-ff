@@ -1,8 +1,8 @@
 import '../pages/index.css';
-import { createCard, removeCard, likeCard } from './components/card.js';
+import { createCard, likeCard } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import { validationConfig, enableValidation, clearValidation } from './validation.js';
-import { getUserProfile, getInitialCards, editProfile, addCard } from './api.js';
+import { getUserProfile, getInitialCards, editProfile, addCard, deleteCard } from './api.js';
 
 // Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -55,6 +55,34 @@ popupImage.querySelector('.popup__close').addEventListener('click', () => {
     closeModal(popupImage);
 });
 
+let userId;
+// загружаем на страницу информацию о пользователе и карточки
+Promise.all([getUserProfile(), getInitialCards()])
+    .then((result) => {
+        document.querySelector('.profile__title').textContent = result[0].name;
+        document.querySelector('.profile__description').textContent = result[0].about;
+        document.querySelector(
+            '.profile__image'
+        ).style.backgroundImage = `url('${result[0].avatar}')`;
+
+        userId = result[0]._id;
+
+        result[1].forEach((card) => {
+            placesList.append(
+                createCard(card, userId, handleDeleteButton, likeCard, showCardImage)
+            );
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+function handleDeleteButton(card) {
+    return deleteCard(card._id).catch((err) => {
+        console.log(err);
+    });
+}
+
 // функция отправки формы для редактирования профиля
 function handleProfileSubmit(evt) {
     evt.preventDefault();
@@ -77,9 +105,9 @@ function handleCardSubmit(evt) {
         .then((card) => {
             placesList.prepend(
                 createCard(
-                    { name: card.name, link: card.link, likes: [] },
-                    '68087d11-b985-4432-95b1-f7afb2d9c956',
-                    removeCard,
+                    { name: card.name, link: card.link, likes: [], owner: { _id: userId } },
+                    userId,
+                    handleDeleteButton,
                     likeCard,
                     showCardImage
                 )
@@ -98,23 +126,5 @@ newCardForm.addEventListener('submit', handleCardSubmit);
 
 // включаем валидацию
 enableValidation(validationConfig);
-
-// загружаем на страницу информацию о пользователе и карточки
-Promise.all([getUserProfile(), getInitialCards()])
-    .then((result) => {
-        document.querySelector('.profile__title').textContent = result[0].name;
-        document.querySelector('.profile__description').textContent = result[0].about;
-        document.querySelector(
-            '.profile__image'
-        ).style.backgroundImage = `url('${result[0].avatar}')`;
-
-        result[1].forEach((card) => {
-            const ownerId = result[0]._id;
-            placesList.append(createCard(card, ownerId, removeCard, likeCard, showCardImage));
-        });
-    })
-    .catch((err) => {
-        console.log(err);
-    });
 
 export { cardTemplate, showCardImage };
