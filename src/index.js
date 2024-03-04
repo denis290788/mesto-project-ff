@@ -1,8 +1,16 @@
 import '../pages/index.css';
-import { createCard, likeCard } from './components/card.js';
+import { createCard } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import { validationConfig, enableValidation, clearValidation } from './validation.js';
-import { getUserProfile, getInitialCards, editProfile, addCard, deleteCard } from './api.js';
+import {
+    getUserProfile,
+    getInitialCards,
+    editProfile,
+    addCard,
+    deleteCard,
+    deleteLike,
+    addLike,
+} from './api.js';
 
 // Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -59,17 +67,16 @@ let userId;
 // загружаем на страницу информацию о пользователе и карточки
 Promise.all([getUserProfile(), getInitialCards()])
     .then((result) => {
-        document.querySelector('.profile__title').textContent = result[0].name;
-        document.querySelector('.profile__description').textContent = result[0].about;
-        document.querySelector(
-            '.profile__image'
-        ).style.backgroundImage = `url('${result[0].avatar}')`;
+        const user = result[0];
+        const cards = result[1];
 
-        userId = result[0]._id;
+        document.querySelector('.profile__title').textContent = user.name;
+        document.querySelector('.profile__description').textContent = user.about;
+        document.querySelector('.profile__image').style.backgroundImage = `url('${user.avatar}')`;
 
-        result[1].forEach((card) => {
+        cards.forEach((card) => {
             placesList.append(
-                createCard(card, userId, handleDeleteButton, likeCard, showCardImage)
+                createCard(card, user._id, handleDeleteButton, handleLikeButton, showCardImage)
             );
         });
     })
@@ -81,6 +88,14 @@ function handleDeleteButton(card) {
     return deleteCard(card._id).catch((err) => {
         console.log(err);
     });
+}
+
+function handleLikeButton(card, userId) {
+    if (card.likes.some((like) => like._id === userId)) {
+        return deleteLike(card._id);
+    } else {
+        return addLike(card._id);
+    }
 }
 
 // функция отправки формы для редактирования профиля
@@ -108,7 +123,7 @@ function handleCardSubmit(evt) {
                     { name: card.name, link: card.link, likes: [], owner: { _id: userId } },
                     userId,
                     handleDeleteButton,
-                    likeCard,
+                    handleLikeButton,
                     showCardImage
                 )
             );
