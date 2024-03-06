@@ -20,7 +20,27 @@
             </header>
             <main class="content">
                 <section class="profile page__section">
-                    <div class="profile__image"></div>
+                    <div class="profile__image">
+                        <div class="upload-avatar-icon-layer">
+                            <!-- <svg
+                                class="upload-avatar-icon"
+                                width="26"
+                                height="26"
+                                viewBox="0 0 26 26"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M26 3.45351L6.76981 22.7932L3.33585 19.2903L22.517 0L26 3.45351ZM0 26L5.10189 24.4706L1.52075 21.0171L0 26Z"
+                                    fill="white"
+                                />
+                            </svg> -->
+                            <img
+                                src="../images/edit-avatar-icon.svg"
+                                alt="Иконка изменения аватарки"
+                            />
+                        </div>
+                    </div>
                     <div class="profile__info">
                         <h1 class="profile__title"></h1>
                         <button
@@ -28,6 +48,7 @@
                             type="button"
                             aria-label="Редактировать профиль"
                         ></button>
+
                         <p class="profile__description"></p>
                     </div>
                     <button
@@ -74,7 +95,9 @@
                             required
                         />
                         <span class="description-input-error"></span>
-                        <button type="submit" class="button popup__button">Сохранить</button>
+                        <button type="submit" class="button popup__button edit-profile__button">
+                            Сохранить
+                        </button>
                     </form>
                 </div>
             </div>
@@ -105,7 +128,9 @@
                             required
                         />
                         <span class="place-link-input-error"></span>
-                        <button type="submit" class="button popup__button">Сохранить</button>
+                        <button type="submit" class="button popup__button add-new-card__button">
+                            Сохранить
+                        </button>
                     </form>
                 </div>
             </div>
@@ -114,6 +139,26 @@
                     <button type="button" class="popup__close" aria-label="Закрыть"></button>
                     <img src="" alt="" class="popup__image" />
                     <p class="popup__caption"></p>
+                </div>
+            </div>
+            <div class="popup popup_type_new-avatar popup_is-animated">
+                <div class="popup__content">
+                    <button type="button" class="popup__close" aria-label="Закрыть"></button>
+                    <h3 class="popup__title">Обновить аватар</h3>
+                    <form class="popup__form" name="new-avatar">
+                        <input
+                            type="url"
+                            name="link"
+                            class="popup__input popup__input_type_url_avatar"
+                            id="avatar-link-input"
+                            placeholder="Ссылка на аватарку"
+                            required
+                        />
+                        <span class="avatar-link-input-error"></span>
+                        <button type="submit" class="button popup__button update-avatar__button">
+                            Сохранить
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

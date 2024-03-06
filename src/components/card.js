@@ -9,8 +9,8 @@ const createCard = (card, userId, handleDeleteButton, handleLikeButton, showCard
     cardElement.querySelector('.card__title').textContent = card.name;
     cardElement.querySelector('.card__like-counter').textContent = card.likes.length;
 
+    //проверяем кем создана карточка, затем отображаем (добавляем обработчик события) или скрываем кнопку удаления карточки
     if (userId !== card.owner._id) {
-        // cardElement.querySelector('.card__delete-button').style.display = 'none';
         cardElement.querySelector('.card__delete-button').remove();
     } else {
         cardElement.querySelector('.card__delete-button').addEventListener('click', function (evt) {
@@ -19,6 +19,7 @@ const createCard = (card, userId, handleDeleteButton, handleLikeButton, showCard
         });
     }
 
+    //проверяем ставил или нет пользователь лайк по карточке
     if (card.likes.some((like) => like._id === userId)) {
         cardElement
             .querySelector('.card__like-button')
@@ -29,6 +30,7 @@ const createCard = (card, userId, handleDeleteButton, handleLikeButton, showCard
             .classList.remove('card__like-button_is-active');
     }
 
+    //добавляем обработчик события по клику на лайк
     cardElement.querySelector('.card__like-button').addEventListener('click', function (evt) {
         handleLikeButton(card, userId)
             .then((card) => {
