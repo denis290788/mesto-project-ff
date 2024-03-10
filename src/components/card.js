@@ -1,40 +1,51 @@
-import { cardTemplate, showCardImage } from '../index.js';
-
 // Функция создания карточки
-const createCard = (card, userId, handleDeleteButton, handleLikeButton, showCardImage) => {
+export const createCard = (
+    card,
+    userId,
+    cardTemplate,
+    handleDeleteButton,
+    handleLikeButton,
+    showCardImage
+) => {
     const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
+    const cardImage = cardElement.querySelector('.card__image');
+    const cardTitle = cardElement.querySelector('.card__title');
+    const cardLikeCounter = cardElement.querySelector('.card__like-counter');
+    const cardDeleteButton = cardElement.querySelector('.card__delete-button');
+    const cardLikeButton = cardElement.querySelector('.card__like-button');
 
-    cardElement.querySelector('.card__image').src = card.link;
-    cardElement.querySelector('.card__image').alt = card.name;
-    cardElement.querySelector('.card__title').textContent = card.name;
-    cardElement.querySelector('.card__like-counter').textContent = card.likes.length;
+    cardImage.src = card.link;
+    cardImage.alt = card.name;
+    cardTitle.textContent = card.name;
+    cardLikeCounter.textContent = card.likes.length;
 
     //проверяем кем создана карточка, затем отображаем (добавляем обработчик события) или скрываем кнопку удаления карточки
     if (userId !== card.owner._id) {
-        cardElement.querySelector('.card__delete-button').remove();
+        cardDeleteButton.remove();
     } else {
-        cardElement.querySelector('.card__delete-button').addEventListener('click', function (evt) {
-            handleDeleteButton(card);
-            evt.target.closest('.card').remove();
+        cardDeleteButton.addEventListener('click', (evt) => {
+            handleDeleteButton(card)
+                .then(() => {
+                    removeCardTemplate(evt.target);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         });
     }
 
     //проверяем ставил или нет пользователь лайк по карточке
     if (card.likes.some((like) => like._id === userId)) {
-        cardElement
-            .querySelector('.card__like-button')
-            .classList.add('card__like-button_is-active');
+        cardLikeButton.classList.add('card__like-button_is-active');
     } else {
-        cardElement
-            .querySelector('.card__like-button')
-            .classList.remove('card__like-button_is-active');
+        cardLikeButton.classList.remove('card__like-button_is-active');
     }
 
     //добавляем обработчик события по клику на лайк
-    cardElement.querySelector('.card__like-button').addEventListener('click', function (evt) {
+    cardLikeButton.addEventListener('click', function (evt) {
         handleLikeButton(card, userId)
             .then((card) => {
-                cardElement.querySelector('.card__like-counter').textContent = card.likes.length;
+                cardLikeCounter.textContent = card.likes.length;
                 evt.target.classList.toggle('card__like-button_is-active');
             })
             .catch((err) => {
@@ -42,11 +53,13 @@ const createCard = (card, userId, handleDeleteButton, handleLikeButton, showCard
             });
     });
 
-    cardElement.querySelector('.card__image').addEventListener('click', function (evt) {
-        showCardImage(evt.target);
+    cardImage.addEventListener('click', function () {
+        showCardImage(card);
     });
 
     return cardElement;
 };
 
-export { createCard };
+export const removeCardTemplate = (cardElement) => {
+    cardElement.closest('.card').remove();
+};
