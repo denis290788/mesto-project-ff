@@ -142,8 +142,14 @@ function handleCardSubmit(evt) {
 }
 
 //функция удаления карточки со страницы
-function handleDeleteButton(card) {
-    return deleteCard(card._id);
+function handleDeleteButton(card, evt) {
+    return deleteCard(card._id)
+        .then(() => {
+            removeCardTemplate(evt.target);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 
 //функция добавления/удаления лайка
