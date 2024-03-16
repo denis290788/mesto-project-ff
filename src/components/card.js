@@ -24,7 +24,13 @@ export const createCard = (
         cardDeleteButton.remove();
     } else {
         cardDeleteButton.addEventListener('click', (evt) => {
-            handleDeleteButton(card, evt);
+            handleDeleteButton(card)
+                .then(() => {
+                    evt.target.closest('.card').remove();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         });
     }
 
@@ -37,7 +43,8 @@ export const createCard = (
 
     //добавляем обработчик события по клику на лайк
     cardLikeButton.addEventListener('click', function (evt) {
-        handleLikeButton(card, userId)
+        const isLiked = evt.target.classList.contains('card__like-button_is-active');
+        handleLikeButton(card, isLiked)
             .then((card) => {
                 cardLikeCounter.textContent = card.likes.length;
                 evt.target.classList.toggle('card__like-button_is-active');
@@ -52,8 +59,4 @@ export const createCard = (
     });
 
     return cardElement;
-};
-
-export const removeCardTemplate = (cardElement) => {
-    cardElement.closest('.card').remove();
 };

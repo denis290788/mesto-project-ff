@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, removeCardTemplate } from './components/card.js';
+import { createCard } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
 import {
@@ -142,19 +142,13 @@ function handleCardSubmit(evt) {
 }
 
 //функция удаления карточки со страницы
-function handleDeleteButton(card, evt) {
-    return deleteCard(card._id)
-        .then(() => {
-            removeCardTemplate(evt.target);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+function handleDeleteButton(card) {
+    return deleteCard(card._id);
 }
 
 //функция добавления/удаления лайка
-function handleLikeButton(card, userId) {
-    if (card.likes.some((like) => like._id === userId)) {
+function handleLikeButton(card, isLiked) {
+    if (isLiked) {
         return deleteLike(card._id);
     } else {
         return addLike(card._id);
