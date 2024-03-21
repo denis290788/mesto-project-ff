@@ -141,9 +141,27 @@ function handleCardSubmit(evt) {
         .finally(() => renderLoading(evt.submitter, false));
 }
 
-//функция удаления карточки со страницы
-function handleDeleteButton(card) {
-    return deleteCard(card._id);
+//функция попапа удаления карточки
+const popupDeleteCard = document.querySelector('.popup_type_delete-confirm');
+const popupDeleteCardTitle = document.querySelector('.popup_delete-confirm-title');
+const deleteCardForm = document.forms['delete-confirm'];
+
+//в переменную handleSubmitConfirmPopup будет записана функция удаления карточки с card._id
+let handleSubmitConfirmPopup;
+
+function handleDeleteButton(card, evt) {
+    popupDeleteCardTitle.textContent = `Вы уверены? Карточка "${card.name}" будет удалена навсегда.`;
+    handleSubmitConfirmPopup = () => {
+        deleteCard(card._id)
+            .then(() => {
+                evt.target.closest('.card').remove();
+                closeModal(popupDeleteCard);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    openModal(popupDeleteCard);
 }
 
 //функция добавления/удаления лайка
@@ -205,10 +223,13 @@ Promise.all([getUserProfile(), getInitialCards()])
         console.log(err);
     });
 
-// обработчики отправки форм для редактирования профиля и добавления карточек
+// обработчики отправки форм для редактирования профиля, добавления/удаления карточек и обновления аватарки
 profileForm.addEventListener('submit', handleProfileSubmit);
 newCardForm.addEventListener('submit', handleCardSubmit);
 newAvatarForm.addEventListener('submit', handleAvatarSubmit);
+deleteCardForm.addEventListener('submit', () => {
+    handleSubmitConfirmPopup();
+});
 
 // включаем валидацию
 enableValidation(validationConfig);

@@ -24,13 +24,7 @@ export const createCard = (
         cardDeleteButton.remove();
     } else {
         cardDeleteButton.addEventListener('click', (evt) => {
-            handleDeleteButton(card)
-                .then(() => {
-                    evt.target.closest('.card').remove();
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            handleDeleteButton(card, evt);
         });
     }
 
