@@ -202,6 +202,7 @@ function renderLoading(element, isLoading) {
 // загружаем на страницу информацию о пользователе и карточки
 Promise.all([getUserProfile(), getInitialCards()])
     .then(([user, cards]) => {
+        userId = user._id;
         profileTitle.textContent = user.name;
         profileDescription.textContent = user.about;
         newAvatarButton.style.backgroundImage = `url('${user.avatar}')`;
